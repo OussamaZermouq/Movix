@@ -1,4 +1,6 @@
 import discord
+import os
+from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
 from get_account_json import load_json, write_to_json, check_user_exist
@@ -16,6 +18,8 @@ intents = discord.Intents.all()
 intents.messages = True
 bot = commands.Bot(command_prefix='/', intents=intents)
 client = discord.Client(intents=intents)
+load_dotenv()
+token = os.getenv('Discord_bot_Token')
 
 @bot.event
 async def on_ready():
@@ -188,4 +192,4 @@ async def slash_command(interaction:discord.Interaction, username:str, tag:str, 
 #            await interaction.followup.send(embed=skin_embed)
 #        
 
-bot.run('MTE3OTQ4ODExNDAxMjYwNjU0Ng.Gd8wmK.OkJEbw-kHll00nWggVJCvCuJ7zs27V8qbS_9_s')
+bot.run(token)
