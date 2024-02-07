@@ -1,0 +1,81 @@
+{
+  "accounts": [
+    {
+      "id": 1,
+      "username": "pinkpanther",
+      "tag": "0001",
+      "login": "corvoss554",
+      "password": "mamati145"
+    },
+    {
+      "id": 2,
+      "username": "Russi",
+      "tag": "2511",
+      "login": "staircaser",
+      "password": "mamati145"
+    },
+    {
+      "id": 3,
+      "username": "Memphr\u00e9",
+      "tag": "0001",
+      "login": "marwane445",
+      "password": "mamati145"
+    },
+    {
+      "id": 4,
+      "username": "boujm3a",
+      "tag": "niak",
+      "login": "qliwati",
+      "password": "amineben22"
+    },
+    {
+      "id": 5,
+      "username": "M3il9a",
+      "tag": "TOZ",
+      "login": "Notsmerfing2021",
+      "password": "P@Sword123789"
+    },
+    {
+      "id": 6,
+      "username": "thecorvo",
+      "tag": "0002",
+      "login": "Noyd_",
+      "password": "mamati145"
+    },
+    {
+      "id": 7,
+      "username": "ofppt",
+      "tag": "7779",
+      "login": "ofppt221",
+      "password": "yassir2001"
+    },
+    {
+      "id": 8,
+      "username": "n3ocity",
+      "tag": "EUW",
+      "login": "n3ocity",
+      "password": "ihaveaids1797"
+    },
+    {
+      "id": 9,
+      "username": "Milfaya",
+      "tag": "1337",
+      "login": "Ninjal9etal",
+      "password": "Passe123"
+    },
+    {
+      "id":10,
+      "username":"Xena ",
+      "tag":"Mee",
+      "login":"ANIIDDD",
+      "password":"bloom2104#"
+    },
+    {
+      "id": 11,
+      "username": "charlamente",
+      "tag": "3821",
+      "login": "ChebaWerdaStan",
+      "password": "ahmC%kcH)c_h46u"
+    }
+  ]
+}
