@@ -10,9 +10,9 @@ def fetch_user(username:str, tag:str):
         "Accept": "application/json"
     }
     urls_expire_after = {
-        url: -1,
+        url: -1,    
     }
-    session = CachedSession('session', urls_expire_after=urls_expire_after)
+    session = CachedSession('session', urls_expire_after=urls_expire_after, cache_control='no-cache')
     response = session.get(url, headers=headers)
     if response.json()['status']==200:
         return response.json()
@@ -43,7 +43,7 @@ def fetch_rank(puuid:str, episode = 'e8a1'):
     urls_expire_after = {
         url: -1,
     }
-    session = CachedSession('session_ranks', urls_expire_after=urls_expire_after)
+    session = CachedSession('session_ranks', urls_expire_after=urls_expire_after, cache_control='no-cache')
     response = session.get(url, headers=headers)
     if response.json()['status'] == 200:
         return response.json()['data']['final_rank_patched']
@@ -60,7 +60,7 @@ def get_rr(puuid:str):
     urls_expire_after = {
         url: -1,
     }
-    session = CachedSession('session_rr', urls_expire_after=urls_expire_after)
+    session = CachedSession('session_rr', urls_expire_after=urls_expire_after, cache_control='no-cache')
 
     response = session.get(url, headers=headers)
     if response.json()['status'] == 200:
