@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
 from get_account_json import load_json, write_to_json, check_user_exist
-from fetch_api import fetch_rank, get_puuid, fetch_user, get_rr, get_level
+from fetch_api import fetch_rank, get_puuid, fetch_user, get_rr, get_level, return_last_filled_rank
 from fetch_api_skins import fetch_skin_item, fetch_user_daily_skins
 
 
@@ -20,6 +20,8 @@ bot = commands.Bot(command_prefix='/', intents=intents)
 client = discord.Client(intents=intents)
 load_dotenv()
 token = os.getenv('Discord_bot_Token')
+
+
 
 @bot.event
 async def on_ready():
@@ -65,22 +67,21 @@ rank_dict = dict(zip(ranks,ranks_url))
 @bot.tree.command(name="rank",description="Check a player's rank using the username and the tag.")
 async def slash_command(interaction:discord.Interaction, username:str, tag:str):
     account_data = fetch_user(username, tag)
-    
     if account_data is None:
         embed_account_error = discord.Embed(description=f"Either the information you have entered are incorrect or there is an issue with the API. Try again later.",color=0xfc1808)
         await interaction.response.send_message(embed=embed_account_error, ephemeral=True)
     else:
-        account_rank = fetch_rank(get_puuid(username, tag)).replace('Unrated','Unranked')
+        account_rank = return_last_filled_rank(account_data['data']['puuid'])
         account_rr = get_rr(get_puuid(username=username,tag=tag))
         embed_account_ranks = discord.Embed(description=f"{username}'s account information : ",color=0x00FF00)
         embed_account_ranks.add_field(name='Username and tag',
                                     value=f"{username}#{tag}",
                                     inline=True)
         embed_account_ranks.add_field(name='Rank',
-                                    value=f'{account_rank} ({account_rr}/100)',
+                                    value=f"{account_rank.get('rank')} | {account_rank.get('season')} | ({account_rr}/100)",
                                     inline=True)
         
-        embed_account_ranks.set_thumbnail(url=f"{rank_dict[account_rank.replace(' ','_')]}")
+        embed_account_ranks.set_thumbnail(url=f"{rank_dict[account_rank.get('rank').replace(' ','_')]}")
         
         embed_account_ranks.set_image(url=account_data['data']['card']['wide'])
         embed_account_ranks.set_footer(text=f"Request made by @{interaction.user.name}", icon_url=f"{interaction.user.avatar.url}")
@@ -108,10 +109,10 @@ async def slash_command(interaction:discord.Interaction):
             login = accounts[i]['login']
             password = accounts[i]['password']
             
-            player_rank = fetch_rank(get_puuid(username, tag))
+            player_rank = return_last_filled_rank(get_puuid(username, tag))
             player_level = get_level(username, tag)
 
-            if player_rank is None or player_rank=='Unrated':
+            if player_rank is None or player_rank.get('rank')=='Unrated':
                 player_rank ='Unranked'
 
             if player_rank ==-2:
@@ -133,7 +134,7 @@ async def slash_command(interaction:discord.Interaction):
                                 inline=True)
                                 
             embed_account.add_field(name='Rank',
-                                value=f'{player_rank} ({account_rr}/100)',
+                                value=f"{player_rank.get('rank')} | {player_rank.get('season')} | ({account_rr}/100)",
                                 inline=False)
             
             embed_account.add_field(name='Login',
@@ -144,7 +145,7 @@ async def slash_command(interaction:discord.Interaction):
                                 value=password,
                                 inline=True)
                                 
-            embed_account.set_thumbnail(url=f"{rank_dict[player_rank.replace(' ','_')]}")
+            embed_account.set_thumbnail(url=f"{rank_dict[player_rank.get('rank').replace(' ','_')]}")
             embed_account.set_footer(text=f"Request made by @{interaction.user.name}", icon_url=f"{interaction.user.avatar.url}")
             
             await interaction.followup.send(embed=embed_account, ephemeral=True)

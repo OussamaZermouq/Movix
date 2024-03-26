@@ -3,7 +3,6 @@ from requests_cache import CachedSession
 import time
 
 
-
 def fetch_user(username:str, tag:str):
     url = f'https://api.henrikdev.xyz/valorant/v1/account/{username}/{tag}?force=false'
     headers = {
@@ -25,17 +24,20 @@ def fetch_user(username:str, tag:str):
 
 def get_puuid(username:str, tag:str):
     data = fetch_user(username=username, tag=tag)
-    if data is None:
-        return None
-    elif data == -1:
-        return -1
-    elif data == -2:
-        return -2
-    elif data['status'] == 200:
+    if data['status'] == 200:
         puuid = data['data']['puuid']
         return puuid
+    return data
 
-def fetch_rank(puuid:str, episode = 'e8a1'):
+
+
+#TODO:if a new season or act is added, add it here.
+seasons = ['e1a1','e1a2','e1a3','e2a1','e2a2','e2a3','e3a1','e3a2','e3a3',
+           'e4a1','e4a2','e4a3','e5a1','e5a2','e5a3','e6a1','e6a2','e6a3',
+           'e7a1','e7a2','e7a3','e8a1','e8a2','e8a3']
+
+#TODO: return a dict that has the rank and the season at the same time
+def fetch_rank(puuid:str, episode:str):
     url = f'https://api.henrikdev.xyz/valorant/v2/by-puuid/mmr/eu/{puuid}?season={episode}'
     headers = {
         "Accept": "application/json"
@@ -51,6 +53,18 @@ def fetch_rank(puuid:str, episode = 'e8a1'):
         return -2
     else:
         return -1
+
+def return_last_filled_rank(puuid:str):
+    for season in reversed(seasons):
+        rank = fetch_rank(puuid = puuid, episode = season)
+        if rank is None or rank == 'Unrated':
+            continue
+        elif rank == -1:
+            return -1
+        elif rank == -2:
+            return -2
+        else:
+            return {'rank':rank,'season':season}
 
 def get_rr(puuid:str):
     url = f"https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr/eu/{puuid}"
@@ -71,3 +85,4 @@ def get_rr(puuid:str):
 
 def get_level(username:str,tag:str):
     return fetch_user(username,tag)['data']['account_level']
+
