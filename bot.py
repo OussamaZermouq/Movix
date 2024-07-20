@@ -32,7 +32,7 @@ async def slash_command(interaction:discord.Interaction, movie_code:str, languag
     await interaction.response.send_message(f"This command is comming soon", ephemeral = True)
 
 
-@bot.tree.command(name="whatsNew",description="info about the latest update for movix")
+@bot.tree.command(name="whatsnew",description="info about the latest update for movix")
 async def slash_command(interaction:discord.Interaction):
     help_embed = discord.Embed(title="Movix Version History", description="A list of versions for the Movix bot | (Current) Version 1.2", color=0xffffff)
     help_embed.set_author(name="Movix", icon_url=None)
