@@ -6,11 +6,9 @@ import os
 from dotenv import load_dotenv
 
 
-
 intents = discord.Intents.all()
 intents.messages = True
 bot = commands.Bot(command_prefix='/', intents=intents)
-
 
 load_dotenv()
 token = os.getenv('Discord_bot_Token')
@@ -19,7 +17,6 @@ token = os.getenv('Discord_bot_Token')
 async def on_ready():
     await bot.tree.sync()
     print(f'Logged in as {bot.user}')
-
 
 #first solution is to make a list of embed messages 
 #which will be populated using a loop and the methods from the API_requests.py 
@@ -37,8 +34,10 @@ async def slash_command(interaction:discord.Interaction):
     help_embed = discord.Embed(title="Movix Version History", description="A list of versions for the Movix bot | (Current) Version 1.2", color=0xffffff)
     help_embed.set_author(name="Movix", icon_url=None)
     help_embed.add_field(name="v1.2 - Get movie stream link", value="Get a stream link for a movie using the movie code use /search to get the movie code.", inline=False)
-    
-    help_embed.set_footer(text=f"Request made by @{interaction.user.name}", icon_url=f"{interaction.user.avatar.url}")
+    if interaction.user.avatar is None :
+        help_embed.set_footer(text=f"Request made by @{interaction.user.name}")
+    else:
+        help_embed.set_footer(text=f"Request made by @{interaction.user.name}", icon_url=f"{interaction.user.avatar.url}")
     await interaction.response.send_message(embed=help_embed)
 
 @bot.tree.command(name="help",description="Help me")
@@ -48,7 +47,11 @@ async def slash_command(interaction:discord.Interaction):
     help_embed.add_field(name="/movies - Get all movies", value="Get information about movies.", inline=False)
     help_embed.add_field(name="/stream - Get a stream link to watch", value="Get a stream link for a movie using the movie code use /search to get the movie code", inline=False)
     help_embed.add_field(name="/subtitles - Get a subtitle for a movie", value="Comming soon", inline=False)
-    help_embed.set_footer(text=f"Request made by @{interaction.user.name}", icon_url=f"{interaction.user.avatar.url}")
+    if interaction.user.avatar is None:
+        help_embed.set_footer(text=f"Request made by @{interaction.user.name}")
+    else:
+        help_embed.set_footer(text=f"Request made by @{interaction.user.name}", icon_url=f"{interaction.user.avatar.url}")
+        
     await interaction.response.send_message(embed=help_embed)
     
 
@@ -113,12 +116,15 @@ async def slash_command(interaction:discord.Interaction, movie_name:str):
                                           value =f"{movie['imdb_code']}",
                                           inline=True)
             
-            embed_movie_success.set_footer(text=f"Request made by @{interaction.user.name}", icon_url=f"{interaction.user.avatar.url}")
+            if interaction.user.avatar is None:
+                embed_movie_success.set_footer(text=f"Request made by @{interaction.user.name}")
+            else:
+                embed_movie_success.set_footer(text=f"Request made by @{interaction.user.name}", icon_url=f"{interaction.user.avatar.url}")
             await interaction.followup.send(embed=embed_movie_success, view=menu_view)
 
             async def select_callback(interaction):
                 selected_option = interaction.data['values'][0]
-                await interaction.response.send_message(f"Downloading torrent from {selected_option}", ephemeral = True)
+                await interaction.response.send_message(f"Download torrent from {selected_option}", ephemeral = True)
             
             select.callback = select_callback
 
@@ -128,7 +134,7 @@ async def slash_command(interaction:discord.Interaction, movie_name:str):
             menu_view.clear_items()
 
 
-@bot.tree.command(name="steam",description="Stream a movie using the movie imdb or tmdb movie code e.g, tt0075314 | search for the movie using /search <Movie name>.")
+@bot.tree.command(name="stream",description="Stream a movie using the imdb/tmdb movie code (tt0075314) | /search <Movie name> for the code.")
 async def slash_command(interaction:discord.Interaction, movie_code:str):
     movie_link = fetch_stream_link_movie(movie_code)
     if movie_link != 404:
